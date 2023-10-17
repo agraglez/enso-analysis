@@ -8,22 +8,26 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.metrics import confusion_matrix, classification_report
-
-
-def metrics_score(actual, predicted):
-    print(classification_report(actual, predicted))
-    cm = confusion_matrix(actual, predicted)
-    plt.figure(figsize=(8, 5))
-    sns.heatmap(cm, annot=True,  fmt='.2f', xticklabels=['False', 'True'],
-                yticklabels=['False', 'True'], cbar=False)
-    plt.title('Confusion Matrix')
-    plt.ylabel('Actual')
-    plt.xlabel('Predicted')
-    plt.show()
 
 
 def plot_feature_importance(importance, names, model_type):
+    '''
+    Plot feature importance of the model.
+
+    Parameters
+    ----------
+    importance : Numpy ndarray of shape (n_features,)
+        Numpy array containint feature importance.
+    names : list 
+        List of names of features.
+    model_type : str
+        Name of the model.
+
+    Returns
+    -------
+    None.
+
+    '''
     # Create arrays from feature importance and feature names
     feature_importance = np.array(importance)
     feature_names = np.array(names)
@@ -44,3 +48,27 @@ def plot_feature_importance(importance, names, model_type):
     plt.title(model_type + 'Feature Importance')
     plt.xlabel('Feature Importance')
     plt.ylabel('Feature Importance')
+
+
+def series_to_nn(data, step=1):
+    '''
+    Create arrays of values from timeseries.
+
+    Parameters
+    ----------
+    data : Numpy ndarray of shape (n,1)
+        Timeseries of interest.
+    step : Int, optional
+        Number of lag observations. The default is 1.
+
+    Returns
+    -------
+    Numpy ndarrays of shape (n-step-1,1) and (n-step-1,) 
+        
+    '''
+    X = []
+    Y = []
+    for i in range(len(data)-step-1):
+        X.append(data[i:(i+step), 0])
+        Y.append(data[i + step, 0])
+    return np.array(X), np.array(Y)
